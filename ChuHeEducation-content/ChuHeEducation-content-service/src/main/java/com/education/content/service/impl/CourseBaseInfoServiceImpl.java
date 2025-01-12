@@ -10,6 +10,7 @@ import com.education.content.mapper.CourseCategoryMapper;
 import com.education.content.mapper.CourseMarketMapper;
 import com.education.content.model.dto.AddCourseDto;
 import com.education.content.model.dto.CourseBaseInfoDto;
+import com.education.content.model.dto.EditCourseDto;
 import com.education.content.model.dto.QueryCourseParamsDto;
 import com.education.content.model.po.CourseBase;
 import com.education.content.model.po.CourseCategory;
@@ -130,6 +131,8 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         return courseBaseInfo;
     }
 
+
+
     //保存营销信息，存在则更新，不存在则添加
     private int saveCourseMarket(CourseMarket courseMarket){
         //参数的合法性校验
@@ -160,8 +163,9 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         }
     }
 
+    @Override
     //根据课程id查询课程基本信息，包括基本信息和营销信息
-    public CourseBaseInfoDto getCourseBaseInfo(long courseId){
+    public CourseBaseInfoDto getCourseBaseInfo(Long courseId){
         //从课程基本信息表查询
         CourseBase courseBase = courseBaseMapper.selectById(courseId);
         if(courseBase == null){
@@ -187,5 +191,35 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
         return courseBaseInfoDto;
 
+    }
+
+    @Override
+    public CourseBaseInfoDto updateCourseBase(Long companyId, EditCourseDto editCourseDto) {
+        //课程id
+        Long id = editCourseDto.getId();
+        //查询课程信息并校验
+        CourseBase courseBase = courseBaseMapper.selectById(id);
+        if(courseBase == null){
+            ChuHeEducationException.cast("课程不存在");
+        }
+        //数据合法性校验
+        //根据具体的业务逻辑去校验
+        //本机构只能修改本机构的课程
+        if(!companyId.equals(courseBase.getCompanyId())){
+            ChuHeEducationException.cast("本机构只能修改本机构的课程");
+        }
+        //封装数据
+        BeanUtils.copyProperties(editCourseDto,courseBase);
+        //修改时间
+        courseBase.setChangeDate(LocalDateTime.now());
+
+        //更新数据库
+        int i = courseBaseMapper.updateById(courseBase);
+        if(i <= 0){
+            ChuHeEducationException.cast("修改课程失败");
+        }
+        //查询课程信息
+        CourseBaseInfoDto courseBaseInfo = getCourseBaseInfo(id);
+        return courseBaseInfo;
     }
 }
