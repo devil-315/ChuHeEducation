@@ -91,6 +91,61 @@ public class TeachplanServiceImpl implements TeachplanService {
         }
     }
 
+    @Override
+    public void moveupTeachplan(Long teachplanId) {
+        Teachplan teachplan = teachplanMapper.selectById(teachplanId);
+        //查询具有相同父id和课程id的课程计划，并按照order by排序
+        LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Teachplan::getParentid,teachplan.getParentid())
+                .eq(Teachplan::getCourseId,teachplan.getCourseId())
+                .orderByDesc(Teachplan::getOrderby);
+        List<Teachplan> teachplans = teachplanMapper.selectList(queryWrapper);
+        //找到当前课程计划在列表中的索引
+        int index = teachplans.indexOf(teachplan);
+        if(index == -1 || index == 0){
+            ChuHeEducationException.cast("当前课程位置无法上移");
+        }
+        //获取上一个课程
+        Teachplan teachplan2 = teachplans.get(index - 1);
+        //交换当前课程和上一个课程
+        Integer orderby1 = teachplan.getOrderby();
+        Integer orderby2 = teachplan2.getOrderby();
+        teachplan.setOrderby(orderby2);
+        teachplan2.setOrderby(orderby1);
+
+        //更新数据库
+        teachplanMapper.updateById(teachplan);
+        teachplanMapper.updateById(teachplan2);
+
+    }
+
+    @Override
+    public void movedownTeachplan(Long teachplanId) {
+        Teachplan teachplan = teachplanMapper.selectById(teachplanId);
+        //查询具有相同父id和课程id的课程计划，并按照order by排序
+        LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Teachplan::getParentid,teachplan.getParentid())
+                .eq(Teachplan::getCourseId,teachplan.getCourseId())
+                .orderByDesc(Teachplan::getOrderby);
+        List<Teachplan> teachplans = teachplanMapper.selectList(queryWrapper);
+        //找到当前课程计划在列表中的索引
+        int index = teachplans.indexOf(teachplan);
+        if(index == -1 || index == teachplans.size() - 1){
+            ChuHeEducationException.cast("当前课程位置无法下移");
+        }
+        //获取下一个课程
+        Teachplan teachplan2 = teachplans.get(index + 1);
+        //交换当前课程和下一个课程
+        Integer orderby1 = teachplan.getOrderby();
+        Integer orderby2 = teachplan2.getOrderby();
+        teachplan.setOrderby(orderby2);
+        teachplan2.setOrderby(orderby1);
+
+        //更新数据库
+        teachplanMapper.updateById(teachplan);
+        teachplanMapper.updateById(teachplan2);
+    }
+
     /**
      * @description 获取最新的排序号
      * @param courseId  课程id
