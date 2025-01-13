@@ -197,6 +197,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     public CourseBaseInfoDto updateCourseBase(Long companyId, EditCourseDto editCourseDto) {
         //课程id
         Long id = editCourseDto.getId();
+        //TODO 更新基本信息
         //查询课程信息并校验
         CourseBase courseBase = courseBaseMapper.selectById(id);
         if(courseBase == null){
@@ -216,8 +217,18 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         //更新数据库
         int i = courseBaseMapper.updateById(courseBase);
         if(i <= 0){
-            ChuHeEducationException.cast("修改课程失败");
+            ChuHeEducationException.cast("修改基本课程信息失败");
         }
+
+        //TODO 更新营销信息
+       /* CourseMarket courseMarket = courseMarketMapper.selectById(id);
+        //封装数据
+        BeanUtils.copyProperties(editCourseDto,courseMarket);
+        //更新数据库
+        int j = courseMarketMapper.updateById(courseMarket);
+        if(j <= 0){
+            ChuHeEducationException.cast("修改营销课程信息失败");
+        }*/
         //查询课程信息
         CourseBaseInfoDto courseBaseInfo = getCourseBaseInfo(id);
         return courseBaseInfo;
