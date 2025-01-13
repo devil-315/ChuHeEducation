@@ -8,14 +8,15 @@ import com.education.base.model.PageResult;
 import com.education.content.mapper.CourseBaseMapper;
 import com.education.content.mapper.CourseCategoryMapper;
 import com.education.content.mapper.CourseMarketMapper;
-import com.education.content.model.dto.AddCourseDto;
-import com.education.content.model.dto.CourseBaseInfoDto;
-import com.education.content.model.dto.EditCourseDto;
-import com.education.content.model.dto.QueryCourseParamsDto;
+import com.education.content.mapper.CourseTeacherMapper;
+import com.education.content.model.dto.*;
 import com.education.content.model.po.CourseBase;
 import com.education.content.model.po.CourseCategory;
 import com.education.content.model.po.CourseMarket;
+import com.education.content.model.po.CourseTeacher;
 import com.education.content.service.CourseBaseInfoService;
+import com.education.content.service.CourseTeacherService;
+import com.education.content.service.TeachplanService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -24,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * ClassName：CourseBaseInfoServiceImpl
@@ -43,6 +46,13 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     CourseMarketMapper courseMarketMapper;
     @Autowired
     CourseCategoryMapper courseCategoryMapper;
+    @Autowired
+    TeachplanService teachplanService;
+    @Autowired
+    CourseTeacherService courseTeacherService;
+
+    @Autowired
+    CourseTeacherMapper courseTeacherMapper;
     @Override
     public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto) {
         //拼装查询条件
@@ -232,5 +242,37 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         //查询课程信息
         CourseBaseInfoDto courseBaseInfo = getCourseBaseInfo(id);
         return courseBaseInfo;
+    }
+
+    @Override
+    @Transactional
+    public void deleteCourse(Long courseId) {
+        //获取要删除的课程
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        //判断课程审核状态，为提交才能删除
+        if(!courseBase.getAuditStatus().equals("202002")){
+            ChuHeEducationException.cast("课程已提交，不能删除");
+        }
+        //删除课程相关的基本信息、营销信息、课程计划、课程教师信息。
+        //删除基本信息
+        courseBaseMapper.deleteById(courseId);
+        //删除营销信息
+        courseMarketMapper.deleteById(courseId);
+        //删除课程计划
+        List<TeachplanDto> teachplanTree = teachplanService.findTeachplanTree(courseId);
+        for (TeachplanDto teachplanDto : teachplanTree) {
+            for (TeachplanDto teachplanDtoNode : teachplanDto.getTeachPlanTreeNodes()) {
+                teachplanService.deleteTeachplan(teachplanDtoNode.getId());
+            }
+            teachplanService.deleteTeachplan(teachplanDto.getId());
+        }
+        //删除课程教师信息
+        List<CourseTeacher> allcourseTeacher = courseTeacherService.findAllcourseTeacher(courseId);
+        List<Long> ids = allcourseTeacher.stream()
+                .map(CourseTeacher::getId)
+                .collect(Collectors.toList());
+        if(ids.size() !=  0){
+            courseTeacherMapper.deleteBatchIds(ids);
+        }
     }
 }
