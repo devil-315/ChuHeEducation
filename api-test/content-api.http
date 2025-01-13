@@ -121,3 +121,17 @@ Content-Type: application/json
 
 ### 删除课程计划
 DELETE {{content_host}}/content/teachplan/292
+
+### 查询老师
+GET {{content_host}}/courseTeacher/list/72
+
+### 新增老师
+POST {{content_host}}/courseTeacher
+Content-Type: application/json
+
+{
+  "courseId": 2,
+  "teacherName": "王老师",
+  "position": "教师职位",
+  "introduction": "教师简介"
+}
