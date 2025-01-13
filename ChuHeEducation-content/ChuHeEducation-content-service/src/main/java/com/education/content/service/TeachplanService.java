@@ -1,5 +1,6 @@
 package com.education.content.service;
 
+import com.education.content.model.dto.SaveTeachplanDto;
 import com.education.content.model.dto.TeachplanDto;
 
 import java.util.List;
@@ -20,4 +21,10 @@ public interface TeachplanService {
      * @return
      */
     public List<TeachplanDto> findTeachplanTree (Long courseId);
+
+    /***
+     * 新增/修改/保存 课程计划
+     * @param saveTeachplanDto
+     */
+    public void saveTeachplan(SaveTeachplanDto saveTeachplanDto);
 }
