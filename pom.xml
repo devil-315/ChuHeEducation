@@ -9,6 +9,7 @@
         <module>ChuHeEducation-base</module>
         <module>ChuHeEducation-content</module>
         <module>ChuHeEducation-system</module>
+        <module>ChuHeEducation-gateway</module>
     </modules>
     <name>ChuHeEducation-parent</name>
     <description>ChuHeEducations-parent</description>

@@ -1,28 +1,24 @@
-#微服务配置
 spring:
   application:
-    name: content-api
+    name: system-service
   cloud:
     nacos:
       server-addr: 192.168.101.65:8848
-      discovery:
+      discovery: #服务注册的相关配置
         namespace: dev
         group: ChuHeEducation
-      config:
+      config: #配置文件相关信息
         namespace: dev
         group: ChuHeEducation
         file-extension: yaml
         refresh-enabled: true
-        extension-configs:
-          - data-id: content-service-${spring.profiles.active}.yaml
-            group: ChuHeEducation
-            refresh: true
         shared-configs:
-          - data-id: swagger-${spring.profiles.active}.yaml
-            group: ChuHeEducation-common
-            refresh: true
           - data-id: logging-${spring.profiles.active}.yaml
             group: ChuHeEducations-common
             refresh: true
+
+  #profiles默认为dev
   profiles:
     active: dev
+
+

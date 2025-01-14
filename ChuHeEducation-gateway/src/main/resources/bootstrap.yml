@@ -1,7 +1,7 @@
 #微服务配置
 spring:
   application:
-    name: content-api
+    name: gateway
   cloud:
     nacos:
       server-addr: 192.168.101.65:8848
@@ -13,16 +13,11 @@ spring:
         group: ChuHeEducation
         file-extension: yaml
         refresh-enabled: true
-        extension-configs:
-          - data-id: content-service-${spring.profiles.active}.yaml
-            group: ChuHeEducation
-            refresh: true
         shared-configs:
-          - data-id: swagger-${spring.profiles.active}.yaml
+          - data-id: logging-${spring.profiles.active}.yaml
             group: ChuHeEducation-common
             refresh: true
-          - data-id: logging-${spring.profiles.active}.yaml
-            group: ChuHeEducations-common
-            refresh: true
+
+
   profiles:
     active: dev

@@ -24,5 +24,15 @@
         <module>ChuHeEducation-content-service</module>
         <module>ChuHeEducation-content-api</module>
     </modules>
-
+    <dependencies>
+        <!--        nacos-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+    </dependencies>
 </project>
