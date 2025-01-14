@@ -3,6 +3,8 @@ package com.education.media.service;
 import com.education.base.model.PageParams;
 import com.education.base.model.PageResult;
 import com.education.media.model.dto.QueryMediaParamsDto;
+import com.education.media.model.dto.UploadFileParamsDto;
+import com.education.media.model.dto.UploadFileResultDto;
 import com.education.media.model.po.MediaFiles;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -24,5 +26,24 @@ public interface MediaFileService {
  */
  public PageResult<MediaFiles> queryMediaFiels(Long companyId,PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto);
 
+ /**
+  * 上传文件
+  * @param companyId 机构id
+  * @param uploadFileParamsDto 上传文件信息
+  * @param localFilePath 文件磁盘路径
+  * @return 文件信息
+  */
+ public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
 
+ /**
+  * @description 将文件信息添加到文件表
+  * @param companyId  机构id
+  * @param fileMd5  文件md5值
+  * @param uploadFileParamsDto  上传文件的信息
+  * @param bucket  桶
+  * @param objectName 对象名称
+  * @return com.education.media.model.po.MediaFiles
+  */
+
+ public MediaFiles addMediaFilesToDb(Long companyId,String fileMd5,UploadFileParamsDto uploadFileParamsDto,String bucket,String objectName);
 }

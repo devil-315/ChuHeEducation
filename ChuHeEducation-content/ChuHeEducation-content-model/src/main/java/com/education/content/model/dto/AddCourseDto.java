@@ -58,6 +58,6 @@ public class AddCourseDto {
   private String charge;
 
   @ApiModelProperty(value = "价格")
-  private BigDecimal price;
+  private Float price;
 
 }
