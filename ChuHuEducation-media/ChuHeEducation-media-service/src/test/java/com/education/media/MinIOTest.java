@@ -2,10 +2,7 @@ package com.education.media;
 
 import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
-import io.minio.GetObjectArgs;
-import io.minio.MinioClient;
-import io.minio.RemoveObjectArgs;
-import io.minio.UploadObjectArgs;
+import io.minio.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -15,6 +12,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilterInputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * ClassName：MinIOTest
@@ -84,5 +85,56 @@ public class MinIOTest {
             System.out.println("下载成功");
         }
 
+    }
+
+    //将分块文件上传至minio
+    @Test
+    public void uploadChunk() throws Exception{
+        String chunkFolderPath = "C:\\Users\\Lenovo\\Videos\\chunk";
+        File chunkFolder = new File(chunkFolderPath);
+        //分块文件
+        File[] files = chunkFolder.listFiles();
+        //将分块文件上传至minio
+        for (int i = 0; i < files.length; i++) {
+            UploadObjectArgs uploadObjectArgs = UploadObjectArgs.builder()
+                        .bucket("testbucket")
+                        .object("chunk/" + i) //对象名 放在子目录下
+                        .filename(files[i].getAbsolutePath()) //本地文件路径
+                        .build();
+            minioClient.uploadObject(uploadObjectArgs);
+            System.out.println("上传分块成功"+i);
+        }
+    }
+
+    //合并文件 要求分块文件最小5M
+    //如果是最后一块可以小于5M
+    @Test
+    public void test_merge() throws Exception{
+        //源文件 方法一
+//        ArrayList<ComposeSource> sources = new ArrayList<>();
+//        for (int i = 0;i < 1;i++){
+//            //指定分块文件的信息
+//            ComposeSource composeSource = ComposeSource.builder()
+//                    .bucket("testbucket")
+//                    .object("chunk/" + i)
+//                    .build();
+//            sources.add(composeSource);
+//        }
+        //方法二
+        List<ComposeSource> sources = Stream.iterate(0, i -> ++i).limit(1)
+                .map(i -> ComposeSource.builder()
+                        .bucket("testbucket")
+                        .object("chunk/" + i)
+                        .build())
+                .collect(Collectors.toList());
+
+        //指定合并后的信息
+        ComposeObjectArgs composeObjectArgs = ComposeObjectArgs.builder()
+                .bucket("testbucket")
+                .object("merge01.mp4")
+                .sources(sources)//指定源文件
+                .build();
+        //合并文件
+        minioClient.composeObject(composeObjectArgs);
     }
 }
