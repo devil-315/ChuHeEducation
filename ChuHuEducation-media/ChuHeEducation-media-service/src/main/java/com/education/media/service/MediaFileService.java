@@ -9,6 +9,8 @@ import com.education.media.model.po.MediaFiles;
 import com.education.media.model.po.RestResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.io.File;
+
 /**
  * @description 媒资文件管理业务类
  * @author Mr.M
@@ -80,4 +82,21 @@ public interface MediaFileService {
    * @param uploadFileParamsDto 文件信息
    */
   public RestResponse mergechunks(Long companyId,String fileMd5,int chunkTotal,UploadFileParamsDto uploadFileParamsDto);
+
+  /**
+   * 从minio下载文件
+   * @param bucket 桶
+   * @param objectName 对象名称
+   * @return 下载后的文件
+   */
+  public File downloadFileFromMinIO(String bucket, String objectName);
+
+  /**
+   * @param localFilePath 文件地址
+   * @param bucket        桶
+   * @param objectName    对象名称
+   * @return void
+   * @description 将文件写入minIO
+   */
+  public boolean addMediaFilesToMinIO(String localFilePath, String mimeType, String bucket, String objectName);
 }

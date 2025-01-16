@@ -6,10 +6,12 @@ import com.education.base.exception.ChuHeEducationException;
 import com.education.base.model.PageParams;
 import com.education.base.model.PageResult;
 import com.education.media.mapper.MediaFilesMapper;
+import com.education.media.mapper.MediaProcessMapper;
 import com.education.media.model.dto.QueryMediaParamsDto;
 import com.education.media.model.dto.UploadFileParamsDto;
 import com.education.media.model.dto.UploadFileResultDto;
 import com.education.media.model.po.MediaFiles;
+import com.education.media.model.po.MediaProcess;
 import com.education.media.model.po.RestResponse;
 import com.education.media.service.MediaFileService;
 import com.j256.simplemagic.ContentInfo;
@@ -54,6 +56,9 @@ public class MediaFileServiceImpl implements MediaFileService {
 
     @Autowired
     MediaFileService currentProxy;
+
+    @Autowired
+    MediaProcessMapper mediaProcessMapper;
 
     //存储普通文件
     @Value("${minio.bucket.files}")
@@ -184,9 +189,36 @@ public class MediaFileServiceImpl implements MediaFileService {
                 log.error("保存文件信息到数据库失败,{}", mediaFiles.toString());
                 ChuHeEducationException.cast("保存文件信息失败");
             }
+            //记录待处理任务
+            addWaitingTask(mediaFiles);
             log.debug("保存文件信息到数据库成功,{}", mediaFiles.toString());
         }
         return mediaFiles;
+    }
+
+    /**
+     * 添加待处理任务
+     * @param mediaFiles 媒资文件信息
+     */
+    private void addWaitingTask(MediaFiles mediaFiles){
+
+        //文件名
+        String filename = mediaFiles.getFilename();
+        //文件扩展名
+        String extension = filename.substring(filename.lastIndexOf("."));
+        //获取文件的mimeType
+        String mimeType = getMimeType(extension);
+        //通过mimeType判断如果是avi视频才写入待处理任务
+        if (mimeType.equals("video/x-msvideo")){
+            MediaProcess mediaProcess = new MediaProcess();
+            BeanUtils.copyProperties(mediaFiles,mediaProcess);
+            mediaProcess.setStatus("1");//设置状态为未处理
+            mediaProcess.setCreateDate(LocalDateTime.now());//上传时间
+            mediaProcess.setUrl(null);
+            mediaProcess.setFailCount(0);//失败次数默认为0
+            mediaProcessMapper.insert(mediaProcess);
+        }
+        //向MediaProcess插入记录
     }
 
     /**
