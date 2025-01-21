@@ -149,6 +149,12 @@ public class MediaFileServiceImpl implements MediaFileService {
         return false;
     }
 
+    @Override
+    public MediaFiles getFileById(String mediaId) {
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(mediaId);
+        return mediaFiles;
+    }
+
 
     /**
      * @param companyId           机构id
@@ -453,7 +459,7 @@ public class MediaFileServiceImpl implements MediaFileService {
     }
     //上传文件
     @Override
-    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath) {
+    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath,String objectName) {
         //文件名
         String filename = uploadFileParamsDto.getFilename();
         //扩展名
@@ -465,7 +471,11 @@ public class MediaFileServiceImpl implements MediaFileService {
         //md5值
         String fileMd5 = getFileMd5(new File(localFilePath));
 
-        String objectName = defaultFolderPath + fileMd5 + extension;
+        //存储到minio中的对象名(带目录)
+        if(StringUtils.isEmpty(objectName)){
+            //使用默认年月日
+            objectName =  defaultFolderPath + fileMd5 + extension;
+        }
         //将文件上传到minio
         boolean result = addMediaFilesToMinIO(localFilePath, mimeType, bucket_meidafiles, objectName);
         if (!result) {

@@ -23,9 +23,6 @@ public interface MediaFileService {
    * @description 媒资文件查询方法
    * @param pageParams 分页参数
    * @param queryMediaParamsDto 查询条件
-   * @return com.xuecheng.base.model.PageResult<com.xuecheng.media.model.po.MediaFiles>
-   * @author Mr.M
-   * @date 2022/9/10 8:57
   */
   public PageResult<MediaFiles> queryMediaFiels(Long companyId,PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto);
 
@@ -34,9 +31,10 @@ public interface MediaFileService {
    * @param companyId 机构id
    * @param uploadFileParamsDto 上传文件信息
    * @param localFilePath 文件磁盘路径
+   * @param objectName 对象名  如果有，按照objectName的目录去存储，没有就按年月日
    * @return 文件信息
    */
-  public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
+  public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath,String objectName);
 
   /**
    * @description 将文件信息添加到文件表
@@ -99,4 +97,6 @@ public interface MediaFileService {
    * @description 将文件写入minIO
    */
   public boolean addMediaFilesToMinIO(String localFilePath, String mimeType, String bucket, String objectName);
+
+    MediaFiles getFileById(String mediaId);
 }
