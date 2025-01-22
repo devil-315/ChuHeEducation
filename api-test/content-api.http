@@ -146,3 +146,13 @@ Content-Type: application/json
 }
 
 
+### 携带token访问资源服务
+GET {{gateway_host}}/content/course/40
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiQ2h1SGVFZHVjYXRpb24iXSwidXNlcl9uYW1lIjoiemhhbmdzYW4iLCJzY29wZSI6WyJhbGwiXSwiZXhwIjoxNzM3NDY0MDI4LCJhdXRob3JpdGllcyI6WyJwMSJdLCJqdGkiOiI0YTlkMTE3NC05MTBiLTRjNTEtYmY0YS0xZTRjMzhmMjAyNmQiLCJjbGllbnRfaWQiOiJYY1dlYkFwcCJ9.7dtVIvRvKNETgc0p-2ItyzwgNbqn3I_9xIFDgzVbCLo
+
+
+
+
+
+
+

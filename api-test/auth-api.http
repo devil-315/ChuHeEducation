@@ -1,0 +1,27 @@
+### 授权码模式
+### 第一步申请授权码(浏览器请求)/oauth/authorize?client_id=c1&response_type=code&scope=all&redirect_uri=http://www.ChuHeEducation.cn
+### 第二步申请令牌
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=authorization_code&code=R1KND5&redirect_uri=http://www.ChuHeEducation.cn
+
+### 密码模式
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username=zhangsan&password=123
+
+###校验jwt令牌
+POST {{auth_host}}/auth/oauth/check_token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiQ2h1SGVFZHVjYXRpb24iXSwidXNlcl9uYW1lIjoiemhhbmdzYW4iLCJzY29wZSI6WyJhbGwiXSwiZXhwIjoxNzM3NDY0MTI3LCJhdXRob3JpdGllcyI6WyJwMSJdLCJqdGkiOiI1YjhiZWYxNi0xNjRiLTQ4NDktYmY2YS02OWVmYTYxYjczZTMiLCJjbGllbnRfaWQiOiJYY1dlYkFwcCJ9.3tEkuIYw04ttItJfttaMy9SIWhfNhThB_sFSXgLpi8s
+
+### 密码模式
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username=stu1&password=$2a$10$0pt7WlfTbnPDTcWtp/.2Mu5CTXvohnNQhR628qq4RoKSc0dGAdEgm
+
+###校验jwt令牌
+POST {{auth_host}}/auth/oauth/check_token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiQ2h1SGVFZHVjYXRpb24iXSwidXNlcl9uYW1lIjoiemhhbmdzYW4iLCJzY29wZSI6WyJhbGwiXSwiZXhwIjoxNzM3NDY0MTI3LCJhdXRob3JpdGllcyI6WyJwMSJdLCJqdGkiOiI1YjhiZWYxNi0xNjRiLTQ4NDktYmY2YS02OWVmYTYxYjczZTMiLCJjbGllbnRfaWQiOiJYY1dlYkFwcCJ9.3tEkuIYw04ttItJfttaMy9SIWhfNhThB_sFSXgLpi8s
+
+################扩展认证请求参数后######################
+###密码模式
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username={"username":"stu1","authType":"password","password":"111111"}
+
+
+### 密码模式
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username=zhangsan&password=123
+
+### 密码模式
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username=t1&password=111111
